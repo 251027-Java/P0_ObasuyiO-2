@@ -1,4 +1,4 @@
-package Repository;
+package com.Revature.Repository;
 
 public interface ImusicRepo {
     int findById(int id);

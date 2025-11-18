@@ -1,6 +1,7 @@
+package com.Revature;   
 public class Music {
     //fields for music class (song info)
-    private int id;
+    private int song_id;
     private String title;
     private String artist;
     private String album;
@@ -9,19 +10,10 @@ public class Music {
     //constructors for a music object (a song with info essentially)
     public Music(){}
 
-    public Music(int id, String title, String artist, String album, boolean saved)
+    //constructor for a song
+    public Music(int song_id, String title, String artist, String album)
     {
-        this.id = id;
-        this.title = title;
-        this. artist = artist;
-        this.album = album;
-        this.saved = saved;
-    }
-
-    //constructor for a song that is not saved/will not be saved
-    public Music(int id, String title, String artist, String album)
-    {
-        this.id = id;
+        this.song_id = song_id;
         this.title = title;
         this. artist = artist;
         this.album = album;
@@ -29,10 +21,10 @@ public class Music {
 
     //getters and setters
     public int getId(){
-        return id;
+        return song_id;
     }
     public void setId(int id) {
-        this.id = id;
+        this.song_id = id;
     }
 
     public String getTitle(){

@@ -6,6 +6,7 @@ public class Music {
     private String artist;
     private String album;
     private boolean saved;
+    private int artist_id;
 
     //constructors for a music object (a song with info essentially)
     public Music(){}
@@ -47,6 +48,17 @@ public class Music {
     public void setAlbum(String album) {
         this.album = album;
     }
+
+    public int getArtist_id(){
+        return artist_id;
+    }
+    public void setArtist_id(int artist_id) {
+        this.artist_id = artist_id;
+    }
+
+
+
+
 
 
 

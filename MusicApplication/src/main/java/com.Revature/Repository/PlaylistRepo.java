@@ -11,9 +11,9 @@ public class PlaylistRepo implements ImusicRepo {
     private Connection connection;
 
     //constructor for connection
-    public PlaylistRepo(Connection connection) {
+    /*public PlaylistRepo(Connection connection) {
         this.connection = connection;
-    }
+    }*/
 
     //methods
     //method to create new playlist into Playlists table using CRUD
@@ -63,7 +63,6 @@ public class PlaylistRepo implements ImusicRepo {
             stmt.setInt(1, playlist_id);
             stmt.setInt(2, song_id);
             stmt.executeUpdate();
-
         } catch (SQLException e) {
             System.err.println("Error removing song: " + e.getMessage());
         }

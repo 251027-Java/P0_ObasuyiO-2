@@ -4,13 +4,13 @@ import java.sql.*;
 
 
 public class MusicRepo implements ImusicRepo {
-    //MusicService and database creation (SQL file)
+    //database creation (SQL file)
     //after that is main method creation and test cases
     //included all sql stuff for music/classes, create tables for 3NF and many-to-many, and establish database connection
     //fields - connection string/database username and password
     private static final String connectionURL = "jdbc:connectionURL://localhost:5432/musicplayerdb";
-    private static final String connectionUser = "ahaha";
-    private static final String connectionPass = "ahaha";
+    private static final String connectionUser = "postgres";
+    private static final String connectionPass = "mysecretpassword";
     private Connection connection;
 
     //SQL repository constructor to create tables/database
@@ -47,12 +47,12 @@ public class MusicRepo implements ImusicRepo {
 
             //created table for music artists (3NF)
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS musicPlayer.Artist (+" +
-                    "artist_id INT PRIMARY KEY," +
+                    "artist_id INT IDENTITY PRIMARY KEY," +
                     "artist_name VARCHAR(70) NOT NULL");
 
             //created table for albums (3NF)
             stmt.executeUpdate("CREATE TABLE musicPlayer.Album (+" +
-                    "album_id INT PRIMARY KEY," +
+                    "album_id INT IDENTITY PRIMARY KEY," +
                     "album_name VARCHAR(70) NOT NULL," +
                     "artist_id INT," +
                     //3NF no repeating groups

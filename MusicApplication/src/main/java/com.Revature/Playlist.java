@@ -38,7 +38,7 @@ public class Playlist {
     }
 
     public boolean getFavorite(){return favorite;}
-    public void setFavorite(){this.favorite = favorite;}
+    public void setFavorite(boolean favorite){this.favorite = favorite;}
 
 
 

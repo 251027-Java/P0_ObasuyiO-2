@@ -4,7 +4,7 @@ import java.sql.*;
 
 
 public class MusicRepo implements ImusicRepo {
-    //next is playlist repo and musicService and database creation (SQL file)
+    //MusicService and database creation (SQL file)
     //after that is main method creation and test cases
     //included all sql stuff for music/classes, create tables for 3NF and many-to-many, and establish database connection
     //fields - connection string/database username and password
@@ -31,7 +31,7 @@ public class MusicRepo implements ImusicRepo {
 
             //create table for music.java
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS musicPlayer.Music(songs) (+" +
-                    "song_id INT PRIMARY KEY," +
+                    "song_id INT IDENTITY PRIMARY KEY," +
                     "title VARCHAR (70) NOT NULL," +
                     "artist_id INT," +
                     "album INT," +
@@ -40,8 +40,8 @@ public class MusicRepo implements ImusicRepo {
                     "FOREIGN KEY (album_id) REFERENCES musicPlayer.Album(album_id)");
 
             //create table for playlist.java
-            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS musicPlayer.Playlist (+" +
-                    "playlist_id INT PRIMARY KEY," +
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS musicPlayer.Playlists (+" +
+                    "playlist_id INT IDENTITY PRIMARY KEY," +
                     "title VARCHAR (70) NOT NULL," +
                     "favorite BOOLEAN");
 
@@ -63,7 +63,7 @@ public class MusicRepo implements ImusicRepo {
                     "playlist_id INT," +
                     "song_id INT," +
                     "PRIMARY KEY (playlist_id, song_id)," +
-                    "FOREIGN KEY (playlist_id) REFERENCES musicPlayer.Playlist(playlist_id)," +
+                    "FOREIGN KEY (playlist_id) REFERENCES musicPlayer.Playlists(playlist_id)," +
                     "FOREIGN KEY (song_id) REFERENCES musicPlayer.Music(song_id)");
 
             IO.println("Tables created successfully");
@@ -74,12 +74,11 @@ public class MusicRepo implements ImusicRepo {
 
     //constructor to create new song in Music(songs) table
     public void newSong(Music Music){
-        String sql = "INSERT INTO Music(songs) (song_id, title, artist_id, album) VALUES (?, ?, ?, ?);";
+        String sql = "INSERT INTO Music(songs) (title, artist_id, album) VALUES (?, ?, ?);";
         try (PreparedStatement stmt = connection.prepareStatement(sql)){
-            stmt.setInt(1, Music.getId());
-            stmt.setString(2, Music.getTitle());
-            stmt.setInt(3, Music.getArtist_id());
-            stmt.setString(4, Music.getAlbum());
+            stmt.setString(1, Music.getTitle());
+            stmt.setInt(2, Music.getArtist_id());
+            stmt.setString(3, Music.getAlbum());
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -101,6 +100,7 @@ public class MusicRepo implements ImusicRepo {
         return 0; //song not found
     }
 
+    //overidden deleteById method to delete a song based on song_id
     @Override
     public void deleteById(int id) {
         String sql = "DELETE FROM musicPlayer.Music(song) WHERE song_id = ?;";
@@ -117,13 +117,14 @@ public class MusicRepo implements ImusicRepo {
         }
     }
 
+    //overidden search method to find song by song title and/or song artist
     @Override
     public String searchByTitleOrArtist(String query) {
-        String sql = "SELECT m.song_id, m.title, a.artist_name " +
-                "FROM musicPlayer.Music m " +
-                "LEFT JOIN musicPlayer.Artist a ON m.artist_id = a.artist_id " +
-                "WHERE LOWER(m.title) LIKE LOWER(?) " +
-                "OR LOWER(a.artist_name) LIKE LOWER(?);";
+        String sql = "SELECT Music(songs).song_id, Music(songs).title, Artist.artist_name " +
+                "FROM musicPlayer.Music(songs) " +
+                "LEFT JOIN musicPlayer.Artist ON Music(songs).artist_id = Artist.artist_id " +
+                "WHERE LOWER(Music(songs).title) LIKE LOWER(?) " +
+                "OR LOWER(Artist.artist_name) LIKE LOWER(?);";
         StringBuilder songFound = new StringBuilder();
         try (PreparedStatement stmt = connection.prepareStatement(sql)){
             //creates search pattern for SQL like query to ignore characters before or after

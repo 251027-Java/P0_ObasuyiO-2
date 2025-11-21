@@ -28,11 +28,11 @@ public class controller {
             System.out.println("5. view all playlists");
             System.out.println("6. create a new playlist");
             System.out.println("7. show songs in a playlist");
-            System.out.println("8. Add song to playlist");
+            System.out.println("8. add song to playlist");
             System.out.println("9. remove song from a playlist");
             System.out.println("10. find a playlist");
-            System.out.println("11. Look for a song");
-            System.out.println("12. Exit");
+            System.out.println("11. look for a song");
+            System.out.println("12. exit");
 
             String choice = scanner.nextLine();
 

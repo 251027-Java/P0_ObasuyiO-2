@@ -44,18 +44,14 @@ public class MusicTest {
         m.setTitle("Title");
         m.setArtist_id(1);
         m.setAlbum_id(2);
-
         musicService.addSong(m);
-
         verify(musicRepo, times(1)).newSong(m);
     }
 
     @Test
     void deleteSong_callsRepoDeleteById() {
         int id = 42;
-
         musicService.deleteSong(id);
-
         verify(musicRepo, times(1)).deleteById(id);
     }
 
@@ -63,9 +59,7 @@ public class MusicTest {
     void playSong_callsSearchByTitleOrArtist_withStringId() {
         int id = 7;
         when(musicRepo.searchByTitleOrArtist(String.valueOf(id))).thenReturn("Found Song");
-
         musicService.playSong(id);
-
         verify(musicRepo, times(1)).searchByTitleOrArtist(String.valueOf(id));
     }
 
@@ -73,9 +67,7 @@ public class MusicTest {
     void searchSongs_callsRepoWithQuery() {
         String q = "beatles";
         when(musicRepo.searchByTitleOrArtist(q)).thenReturn("results");
-
         musicService.searchSongs(q);
-
         verify(musicRepo, times(1)).searchByTitleOrArtist(q);
     }
 
@@ -83,9 +75,7 @@ public class MusicTest {
     void viewAllSongs_callsRepoGetAllSongs() {
         // The service method `viewAllSongs` prints result; we verify repo interaction
         when(musicRepo.getAllSongs()).thenReturn(Collections.emptyList());
-
         musicService.viewAllSongs();
-
         verify(musicRepo, times(1)).getAllSongs();
     }
 
@@ -93,12 +83,9 @@ public class MusicTest {
     void createPlaylist_callsRepoNewPlaylist_withCorrectFields() {
         String title = "My List";
         boolean favorite = true;
-
         playlistService.createPlaylist(title, favorite);
-
         ArgumentCaptor<Playlist> captor = ArgumentCaptor.forClass(Playlist.class);
         verify(playlistRepo, times(1)).newPlaylist(captor.capture());
-
         Playlist created = captor.getValue();
         assertEquals(title, created.getTitle());
         assertEquals(favorite, created.getFavorite());
@@ -107,18 +94,14 @@ public class MusicTest {
     @Test
     void addSongToPlaylist_callsRepoAddSong() {
         int pid = 3, sid = 11;
-
         playlistService.addSongToPlaylist(pid, sid);
-
         verify(playlistRepo, times(1)).addSong(pid, sid);
     }
 
     @Test
     void removeSongFromPlaylist_callsRepoRemoveSong() {
         int pid = 5, sid = 9;
-
         playlistService.removeSongFromPlaylist(pid, sid);
-
         verify(playlistRepo, times(1)).removeSong(pid, sid);
     }
 
@@ -128,11 +111,8 @@ public class MusicTest {
         p.setId(1);
         p.setTitle("a");
         p.setFavorite(false);
-
         when(playlistRepo.showAllPlaylists()).thenReturn(List.of(p));
-
         playlistService.showAllPlaylists();
-
         verify(playlistRepo, times(1)).showAllPlaylists();
     }
 
@@ -140,9 +120,7 @@ public class MusicTest {
     void showPlaylistSongs_callsRepoGetPlaylistSongs() {
         int pid = 2;
         when(playlistRepo.getPlaylistSongs(pid)).thenReturn(Collections.emptyList());
-
         playlistService.showPlaylistSongs(pid);
-
         verify(playlistRepo, times(1)).getPlaylistSongs(pid);
     }
 }

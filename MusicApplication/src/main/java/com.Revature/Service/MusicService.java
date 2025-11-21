@@ -4,6 +4,8 @@ import com.Revature.Music;
 import com.Revature.Repository.MusicRepo;
 import com.Revature.Repository.PlaylistRepo;
 
+import java.util.List;
+
 public class MusicService {
     //fields
     private MusicRepo musicRepo;
@@ -40,8 +42,8 @@ public class MusicService {
     }
 
     public void viewAllSongs() {
-        String allSongs = musicRepo.getAllSongs();
-        IO.println(allSongs);
+        List<Music> allSongs = musicRepo.getAllSongs();
+        IO.println(allSongs.toString());
     }
 
 }

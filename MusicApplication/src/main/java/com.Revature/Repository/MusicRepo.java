@@ -25,56 +25,63 @@ public class MusicRepo implements ImusicRepo {
     }
 
     //method to create all the tables (in one method); used instead/in addition to creating it in a SQL file (will have musicDB.sql)
-    private void tableCreator() throws SQLException{
-        try (Statement stmt = connection.createStatement()){
+    private void tableCreator() throws SQLException {
+        try (Statement stmt = connection.createStatement()) {
+            // Create schema
             stmt.executeUpdate("CREATE SCHEMA IF NOT EXISTS musicPlayer");
 
-            //create table for music.java
-            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS musicPlayer.Music(songs) (" +
-                    "song_id INT IDENTITY PRIMARY KEY," +
-                    "title VARCHAR (70) NOT NULL," +
-                    "artist_id INT," +
-                    "album INT," +
-                    //3NF no repeating groups
-                    "FOREIGN KEY (artist_id) REFERENCES musicPlayer.Artist(artist_id)," +
-                    "FOREIGN KEY (album_id) REFERENCES musicPlayer.Album(album_id)");
-
-            //create table for playlist.java
-            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS musicPlayer.Playlists (" +
-                    "playlist_id INT IDENTITY PRIMARY KEY," +
-                    "title VARCHAR (70) NOT NULL," +
-                    "favorite BOOLEAN");
-
-            //created table for music artists (3NF)
+            // TABLE: Artist
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS musicPlayer.Artist (" +
-                    "artist_id INT IDENTITY PRIMARY KEY," +
-                    "artist_name VARCHAR(70) NOT NULL");
+                    "artist_id SERIAL PRIMARY KEY, " +
+                    "artist_name VARCHAR(70) NOT NULL" +
+                    ")"
+            );
+            // TABLE: Album
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS musicPlayer.Album (" +
+                    "album_id SERIAL PRIMARY KEY, " +
+                    "album_name VARCHAR(70) NOT NULL, " +
+                    "artist_id INT, " +
+                    "FOREIGN KEY (artist_id) REFERENCES musicPlayer.Artist(artist_id)" +
+                    ")"
+            );
 
-            //created table for albums (3NF)
-            stmt.executeUpdate("CREATE TABLE musicPlayer.Album (" +
-                    "album_id INT IDENTITY PRIMARY KEY," +
-                    "album_name VARCHAR(70) NOT NULL," +
-                    "artist_id INT," +
-                    //3NF no repeating groups
-                    "FOREIGN KEY (artist_id) REFERENCES musicPlayer.Artist(artist_id)");
+            // TABLE: Songs
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS musicPlayer.Songs (" +
+                            "song_id SERIAL PRIMARY KEY, " +
+                            "title VARCHAR(70) NOT NULL, " +
+                            "artist_id INT, " +
+                            "album_id INT, " +
+                            "FOREIGN KEY (artist_id) REFERENCES musicPlayer.Artist(artist_id), " +
+                            "FOREIGN KEY (album_id) REFERENCES musicPlayer.Album(album_id)" +
+                            ")"
+            );
+            // TABLE: Playlists
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS musicPlayer.Playlists (" +
+                            "playlist_id SERIAL PRIMARY KEY, " +
+                            "title VARCHAR(70) NOT NULL, " +
+                            "favorite BOOLEAN" +
+                            ")"
+            );
 
-            //playlistSongs table for many-to-many relationship
-            stmt.executeUpdate("CREATE TABLE musicPlayer.PlaylistSongs (" +
-                    "playlist_id INT," +
-                    "song_id INT," +
-                    "PRIMARY KEY (playlist_id, song_id)," +
-                    "FOREIGN KEY (playlist_id) REFERENCES musicPlayer.Playlists(playlist_id)," +
-                    "FOREIGN KEY (song_id) REFERENCES musicPlayer.Music(song_id)");
-
-            IO.println("Tables created successfully");
-        } catch (Exception e){
+            // TABLE: PlaylistSongs (many-to-many)
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS musicPlayer.PlaylistSongs (" +
+                            "playlist_id INT, " +
+                            "song_id INT, " +
+                            "PRIMARY KEY (playlist_id, song_id), " +
+                            "FOREIGN KEY (playlist_id) REFERENCES musicPlayer.Playlists(playlist_id), " +
+                            "FOREIGN KEY (song_id) REFERENCES musicPlayer.Songs(song_id)" +
+                            ")"
+            );
+            System.out.println("Tables created successfully");
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+
     //constructor to create new song in Music(songs) table
     public void newSong(Music Music){
-        String sql = "INSERT INTO Music(songs) (title, artist_id, album) VALUES (?, ?, ?);";
+        String sql = "INSERT INTO Songs (title, artist_id, album) VALUES (?, ?, ?);";
         try (PreparedStatement stmt = connection.prepareStatement(sql)){
             stmt.setString(1, Music.getTitle());
             stmt.setInt(2, Music.getArtist_id());
@@ -87,7 +94,7 @@ public class MusicRepo implements ImusicRepo {
     //method to view all songs in Music(songs) table
     public List<Music> getAllSongs() {
     String sql = "SELECT song_id, title, artist_id, album " +
-                 "FROM musicPlayer.Music " +
+                 "FROM musicPlayer.Songs " +
                  "ORDER BY title;";
     List<Music> songs = new ArrayList<>();
     try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -109,7 +116,7 @@ public class MusicRepo implements ImusicRepo {
     //overidden findById method to select a song based on song_id
     @Override
     public int findById(int id) {
-        String sql = "SELECT song_id FROM musicPlayer.Music(song) WHERE song_id = ?;";
+        String sql = "SELECT song_id FROM musicPlayer.Songs WHERE song_id = ?;";
         try (PreparedStatement stmt = connection.prepareStatement(sql)){
             stmt.setInt(1, id);
             ResultSet result = stmt.executeQuery();
@@ -125,7 +132,7 @@ public class MusicRepo implements ImusicRepo {
     //overidden deleteById method to delete a song based on song_id
     @Override
     public void deleteById(int id) {
-        String sql = "DELETE FROM musicPlayer.Music(song) WHERE song_id = ?;";
+        String sql = "DELETE FROM musicPlayer.Songs WHERE song_id = ?;";
         try (PreparedStatement stmt = connection.prepareStatement(sql)){
             stmt.setInt(1, id);
             int rowGone = stmt.executeUpdate();
@@ -142,10 +149,10 @@ public class MusicRepo implements ImusicRepo {
     //overidden search method to find song by song title and/or song artist
     @Override
     public String searchByTitleOrArtist(String query) {
-        String sql = "SELECT Music(songs).song_id, Music(songs).title, Artist.artist_name " +
-                "FROM musicPlayer.Music(songs) " +
-                "LEFT JOIN musicPlayer.Artist ON Music(songs).artist_id = Artist.artist_id " +
-                "WHERE LOWER(Music(songs).title) LIKE LOWER(?) " +
+        String sql = "SELECT Songs.song_id, Songs.title, Artist.artist_name " +
+                "FROM musicPlayer.Songs " +
+                "LEFT JOIN musicPlayer.Artist ON Songs.artist_id = Artist.artist_id " +
+                "WHERE LOWER(Songs.title) LIKE LOWER(?) " +
                 "OR LOWER(Artist.artist_name) LIKE LOWER(?);";
         StringBuilder songFound = new StringBuilder();
         try (PreparedStatement stmt = connection.prepareStatement(sql)){

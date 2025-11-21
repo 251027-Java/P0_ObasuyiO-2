@@ -70,9 +70,9 @@ public class PlaylistRepo implements ImusicRepo {
 
     //method to retrieve all songs from a specific playlist identified by playlist id using sql query
     public List<Music> getPlaylistSongs(int playlist_id) {
-        String sql = "SELECT Music(songs).song_id, Music(songs).title, Music(songs).artist, Music(songs).album " +
-                "FROM Music(songs) JOIN PlaylistSongs ON Music(songs).song_id = PlaylistSongs.song_id " +
-                "WHERE PlaylistSongs.playlist_id = ? ORDER BY Music(songs).title;";
+        String sql = "SELECT Songs.song_id, Songs.title, Songs.artist, Songs.album " +
+                "FROM Songs JOIN PlaylistSongs ON Songs.song_id = PlaylistSongs.song_id " +
+                "WHERE PlaylistSongs.playlist_id = ? ORDER BY Songs.title;";
         List<Music> songs = new ArrayList<>();
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, playlist_id);

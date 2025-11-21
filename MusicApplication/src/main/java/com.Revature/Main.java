@@ -9,14 +9,14 @@ public class Main {
     public static void main(String[] args) {
         // repositories (handle DB connection inside)
         MusicRepo musicRepo = new MusicRepo();
-        PlaylistRepo playlistRepo = new PlaylistRepo();
+        //PlaylistRepo playlistRepo = new PlaylistRepo();
 
         // services
-        MusicService musicService = new MusicService(musicRepo, playlistRepo);
-        PlaylistService playlistService = new PlaylistService(playlistRepo, musicRepo);
+        //MusicService musicService = new MusicService(musicRepo, playlistRepo);
+        //PlaylistService playlistService = new PlaylistService(playlistRepo, musicRepo);
 
         // controller and run the application
-        controller appController = new controller(musicService, playlistService);
-        appController.run();
+        //controller appController = new controller(musicService, playlistService);
+        //appController.run();
     }
 }

@@ -4,11 +4,10 @@ import java.sql.*;
 
 
 public class MusicRepo implements ImusicRepo {
-    //database creation (SQL file)
     //after that is main method creation and test cases
     //included all sql stuff for music/classes, create tables for 3NF and many-to-many, and establish database connection
     //fields - connection string/database username and password
-    private static final String connectionURL = "jdbc:connectionURL://localhost:5432/musicplayerdb";
+    private static final String connectionURL = "jdbc:postgresql://localhost:5432/musicplayerdb";
     private static final String connectionUser = "postgres";
     private static final String connectionPass = "mysecretpassword";
     private Connection connection;
@@ -30,7 +29,7 @@ public class MusicRepo implements ImusicRepo {
             stmt.executeUpdate("CREATE SCHEMA IF NOT EXISTS musicPlayer");
 
             //create table for music.java
-            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS musicPlayer.Music(songs) (+" +
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS musicPlayer.Music(songs) (" +
                     "song_id INT IDENTITY PRIMARY KEY," +
                     "title VARCHAR (70) NOT NULL," +
                     "artist_id INT," +
@@ -40,18 +39,18 @@ public class MusicRepo implements ImusicRepo {
                     "FOREIGN KEY (album_id) REFERENCES musicPlayer.Album(album_id)");
 
             //create table for playlist.java
-            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS musicPlayer.Playlists (+" +
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS musicPlayer.Playlists (" +
                     "playlist_id INT IDENTITY PRIMARY KEY," +
                     "title VARCHAR (70) NOT NULL," +
                     "favorite BOOLEAN");
 
             //created table for music artists (3NF)
-            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS musicPlayer.Artist (+" +
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS musicPlayer.Artist (" +
                     "artist_id INT IDENTITY PRIMARY KEY," +
                     "artist_name VARCHAR(70) NOT NULL");
 
             //created table for albums (3NF)
-            stmt.executeUpdate("CREATE TABLE musicPlayer.Album (+" +
+            stmt.executeUpdate("CREATE TABLE musicPlayer.Album (" +
                     "album_id INT IDENTITY PRIMARY KEY," +
                     "album_name VARCHAR(70) NOT NULL," +
                     "artist_id INT," +
@@ -59,7 +58,7 @@ public class MusicRepo implements ImusicRepo {
                     "FOREIGN KEY (artist_id) REFERENCES musicPlayer.Artist(artist_id)");
 
             //playlistSongs table for many-to-many relationship
-            stmt.executeUpdate("CREATE TABLE musicPlayer.PlaylistSongs (+" +
+            stmt.executeUpdate("CREATE TABLE musicPlayer.PlaylistSongs (" +
                     "playlist_id INT," +
                     "song_id INT," +
                     "PRIMARY KEY (playlist_id, song_id)," +

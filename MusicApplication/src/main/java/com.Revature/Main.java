@@ -1,5 +1,10 @@
+import com.Revature.Repository.MusicRepo;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        MusicRepo repo = new MusicRepo();
+        
+        
+        
     }
 }

@@ -29,9 +29,10 @@ public class PlaylistRepo implements ImusicRepo {
     //methods
     //method to create new playlist into Playlists table using CRUD
     public void newPlaylist(Playlist playlist) {
-        String sql = "INSERT INTO Playlists (title) VALUES (?);";
+        String sql = "INSERT INTO musicPlayer.Playlists (title, favorite) VALUES (?, ?);";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, playlist.getTitle());
+            stmt.setBoolean(2, playlist.getFavorite());
             stmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -57,7 +58,7 @@ public class PlaylistRepo implements ImusicRepo {
 
     //method to add a song into a specific playlist using CRUD
     public void addSong(int playlist_id, int song_id) {
-        String sql = "INSERT INTO PlaylistSongs (playlist_id, song_id) VALUES (?, ?) ON CONFLICT DO NOTHING;";
+        String sql = "INSERT INTO musicPlayer.PlaylistSongs (playlist_id, song_id) VALUES (?, ?) ON CONFLICT DO NOTHING;";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, playlist_id);
             stmt.setInt(2, song_id);
@@ -69,7 +70,7 @@ public class PlaylistRepo implements ImusicRepo {
 
    //method to remove a song from a specific playlist using CRUD
     public void removeSong(int playlist_id, int song_id) {
-        String sql = "DELETE FROM PlaylistSongs WHERE playlist_id = ? AND song_id = ?;";
+        String sql = "DELETE FROM musicPlayer.PlaylistSongs WHERE playlist_id = ? AND song_id = ?;";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, playlist_id);
             stmt.setInt(2, song_id);
@@ -81,8 +82,8 @@ public class PlaylistRepo implements ImusicRepo {
 
     //method to retrieve all songs from a specific playlist identified by playlist id using sql query
     public List<Music> getPlaylistSongs(int playlist_id) {
-        String sql = "SELECT Songs.song_id, Songs.title, Songs.artist, Songs.album " +
-                "FROM Songs JOIN PlaylistSongs ON Songs.song_id = PlaylistSongs.song_id " +
+        String sql = "SELECT Songs.song_id, Songs.title, Songs.artist_id, Songs.album_id " +
+                "FROM musicPlayer.Songs JOIN musicPlayer.PlaylistSongs ON Songs.song_id = PlaylistSongs.song_id " +
                 "WHERE PlaylistSongs.playlist_id = ? ORDER BY Songs.title;";
         List<Music> songs = new ArrayList<>();
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -92,8 +93,8 @@ public class PlaylistRepo implements ImusicRepo {
                 Music song = new Music();
                 song.setId(result.getInt("song_id"));
                 song.setTitle(result.getString("title"));
-                song.setArtist(result.getString("artist"));
-                song.setAlbum(result.getString("album"));
+                song.setArtist_id(result.getInt("artist_id"));
+                song.setAlbum_id(result.getInt("album_id"));
                 songs.add(song);
             }
         } catch (SQLException e) {
@@ -104,7 +105,7 @@ public class PlaylistRepo implements ImusicRepo {
 
     //method to show all created playlist by user using sql query
     public List<Playlist> showAllPlaylists() {
-        String sql = "SELECT playlist_id, title, favorite FROM Playlists ORDER BY playlist_id DESC";
+        String sql = "SELECT playlist_id, title, favorite FROM musicPlayer.Playlists ORDER BY playlist_id DESC";
         List<Playlist> playlists = new ArrayList<>();
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             ResultSet result = stmt.executeQuery();
@@ -124,7 +125,7 @@ public class PlaylistRepo implements ImusicRepo {
     //overidden findById method to select a playlist based on playlist_id
     @Override
     public int findById(int id) {
-        String sql = "SELECT playlist_id FROM Playlists WHERE playlist_id = ?;";
+        String sql = "SELECT playlist_id FROM musicPlayer.Playlists WHERE playlist_id = ?;";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, id);
             ResultSet result = stmt.executeQuery();
@@ -140,7 +141,7 @@ public class PlaylistRepo implements ImusicRepo {
     //overidden deleteById method to delete a playlist based on playlist_id
     @Override
     public void deleteById(int id) {
-        String sql = "DELETE FROM Playlists WHERE playlist_id = ?;";
+        String sql = "DELETE FROM musicPlayer.Playlists WHERE playlist_id = ?;";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
@@ -152,7 +153,7 @@ public class PlaylistRepo implements ImusicRepo {
     //overidden method to find a song by a specific title that is in a specific playlist
     @Override
     public String searchByTitleOrArtist(String query) {
-        String sql = "SELECT playlist_id, title FROM Playlists " +
+        String sql = "SELECT playlist_id, title FROM musicPlayer.Playlists " +
                 "WHERE title LIKE ? ORDER BY title ASC;";
         StringBuilder result = new StringBuilder();
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {

@@ -20,21 +20,19 @@ public class controller {
         boolean running = true;
 
         while (running) {
-            System.out.println("Let's get started! what do u want to do first?)");
+            System.out.println("Let's get started! (what do u want to do first?)");
             System.out.println("1. view all songs");
             System.out.println("2. add songs to database");
             System.out.println("3. remove songs from database");
             System.out.println("4. look for a song");
-            System.out.println("5. play a song");
-            System.out.println("6. view all playlists");
-            System.out.println("7. create a new playlist");
-            System.out.println("8. show songs in a playlist");
-            System.out.println("9. Add song to playlist");
-            System.out.println("10. remove song from a playlist");
-            System.out.println("11. find a playlist");
-            System.out.println("12. delete a playlist");
-            System.out.println("13. Look for a song");
-            System.out.println("14. Exit");
+            System.out.println("5. view all playlists");
+            System.out.println("6. create a new playlist");
+            System.out.println("7. show songs in a playlist");
+            System.out.println("8. Add song to playlist");
+            System.out.println("9. remove song from a playlist");
+            System.out.println("10. find a playlist");
+            System.out.println("11. Look for a song");
+            System.out.println("12. Exit");
 
             String choice = scanner.nextLine();
 
@@ -66,15 +64,10 @@ public class controller {
                     String query = scanner.nextLine();
                     musicService.searchSongs(query);
                     break;
-                case "5": // play a song
-                    System.out.print("Enter song ID to play: ");
-                    int playId = Integer.parseInt(scanner.nextLine());
-                    musicService.playSong(playId);
-                    break;
-                case "6": // view all playlists
+                case "5": // view all playlists
                     playlistService.showAllPlaylists();
                     break;
-                case "7": // create a new playlist
+                case "6": // create a new playlist
                     System.out.print("Enter playlist title: ");
                     String title = scanner.nextLine();
                     System.out.print("Mark as favorite? (y/n): ");
@@ -82,41 +75,36 @@ public class controller {
                     boolean favorite = fav.equals("y") || fav.equals("yes");
                     playlistService.createPlaylist(title, favorite);
                     break;
-                case "8": // show songs in a playlist
+                case "7": // show songs in a playlist
                     System.out.print("Enter playlist ID: ");
                     int playlistId = Integer.parseInt(scanner.nextLine());
                     playlistService.showPlaylistSongs(playlistId);
                     break;
-                case "9": // add song to playlist
+                case "8": // add song to playlist
                     System.out.print("Enter playlist ID: ");
                     int addPlaylistId = Integer.parseInt(scanner.nextLine());
                     System.out.print("Enter song ID: ");
                     int addSongId = Integer.parseInt(scanner.nextLine());
                     playlistService.addSongToPlaylist(addPlaylistId, addSongId);
                     break;
-                case "10": // remove song from a playlist
+                case "9": // remove song from a playlist
                     System.out.print("Enter playlist ID: ");
                     int remPlaylistId = Integer.parseInt(scanner.nextLine());
                     System.out.print("Enter song ID: ");
                     int remSongId = Integer.parseInt(scanner.nextLine());
                     playlistService.removeSongFromPlaylist(remPlaylistId, remSongId);
                     break;
-                case "11": // find a playlist
+                case "10": // find a playlist
                     System.out.print("Enter playlist search query: ");
                     String pQuery = scanner.nextLine();
                     playlistService.searchPlaylists(pQuery);
                     break;
-                case "12": // delete a playlist
-                    System.out.print("Enter playlist ID to delete: ");
-                    int delPlaylistId = Integer.parseInt(scanner.nextLine());
-                    playlistService.deletePlaylist(delPlaylistId);
-                    break;
-                case "13": // look for a song (duplicate)
+                case "11": // look for a song (duplicate)
                     System.out.print("Enter song search query: ");
                     String sQuery = scanner.nextLine();
                     musicService.searchSongs(sQuery);
                     break;
-                case "14": // Exit
+                case "12": // Exit
                     running = false;
                     break;
                 default:

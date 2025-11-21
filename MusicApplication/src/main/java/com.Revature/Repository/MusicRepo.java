@@ -59,7 +59,7 @@ public class MusicRepo implements ImusicRepo {
             );
             // create playlist table
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS musicPlayer.Playlists (" +
-                            "playlist_id SERIAL PRIMARY KEY, " +
+                            "playlist_id SERIAL PRIMARY KEY ON DELETE CASCADE, " +
                             "title VARCHAR(70) NOT NULL, " +
                             "favorite BOOLEAN" +
                             ")"
@@ -70,8 +70,8 @@ public class MusicRepo implements ImusicRepo {
                             "playlist_id INT, " +
                             "song_id INT, " +
                             "PRIMARY KEY (playlist_id, song_id), " +
-                            "FOREIGN KEY (playlist_id) REFERENCES musicPlayer.Playlists(playlist_id), " +
-                            "FOREIGN KEY (song_id) REFERENCES musicPlayer.Songs(song_id)" +
+                            "FOREIGN KEY (playlist_id) REFERENCES musicPlayer.Playlists(playlist_id) ON DELETE CASCADE, " +
+                            "FOREIGN KEY (song_id) REFERENCES musicPlayer.Songs(song_id) ON DELETE CASCADE" +
                             ")"
             );
             System.out.println("Tables created successfully");
@@ -170,11 +170,11 @@ public class MusicRepo implements ImusicRepo {
                         .append(" | Artist: ").append(result.getString("artist_name"))
                         .append("\n");
             }
+            if (songFound.length() == 0){
+                return "No songs found for query: " + query;
+            }
         } catch (SQLException e){
             e.printStackTrace();
-        }
-        if (songFound.length() == 0){
-            return "No songs found for query: " + query;
         }
         return songFound.toString();
     }

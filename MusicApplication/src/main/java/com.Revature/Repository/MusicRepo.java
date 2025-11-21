@@ -1,10 +1,11 @@
 package com.Revature.Repository;
 import com.Revature.Music;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MusicRepo implements ImusicRepo {
-    //after that is main method creation and test cases
     //included all sql stuff for music/classes, create tables for 3NF and many-to-many, and establish database connection
     //fields - connection string/database username and password
     private static final String connectionURL = "jdbc:postgresql://localhost:5432/musicplayerdb";
@@ -82,6 +83,28 @@ public class MusicRepo implements ImusicRepo {
             e.printStackTrace();
         }
     }
+
+    //method to view all songs in Music(songs) table
+    public List<Music> getAllSongs() {
+    String sql = "SELECT song_id, title, artist_id, album " +
+                 "FROM musicPlayer.Music " +
+                 "ORDER BY title;";
+    List<Music> songs = new ArrayList<>();
+    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        ResultSet result = stmt.executeQuery();
+        while (result.next()) {
+            Music song = new Music();
+            song.setId(result.getInt("song_id"));
+            song.setTitle(result.getString("title"));
+            song.setArtist_id(result.getInt("artist_id"));
+            song.setAlbum(result.getString("album"));  // or album_id, depending on schema
+            songs.add(song);
+        }
+    } catch (SQLException e) {
+        System.err.println("Error retrieving all songs: " + e.getMessage());
+    }
+    return songs;
+}
 
     //overidden findById method to select a song based on song_id
     @Override

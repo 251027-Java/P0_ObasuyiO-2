@@ -39,4 +39,9 @@ public class MusicService {
         IO.println(songFound);
     }
 
+    public void viewAllSongs() {
+        String allSongs = musicRepo.getAllSongs();
+        IO.println(allSongs);
+    }
+
 }

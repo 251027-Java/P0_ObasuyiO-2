@@ -14,11 +14,13 @@ public class MusicRepo implements ImusicRepo {
     private Connection connection;
 
     //SQL repository constructor to create tables/database
-    public MusicRepo(){
+    public MusicRepo(boolean created){
         try{
             connection = DriverManager.getConnection(connectionURL, connectionUser, connectionPass);
-            tableCreator();
-            IO.println("Successfully created tables for database!");
+            if (!created) {
+                tableCreator();
+                IO.println("Successfully created tables for database!");
+            }
         } catch (SQLException e){
             e.printStackTrace();
         }
@@ -30,13 +32,13 @@ public class MusicRepo implements ImusicRepo {
             // Create schema
             stmt.executeUpdate("CREATE SCHEMA IF NOT EXISTS musicPlayer");
 
-            // TABLE: Artist
+            // create artist table
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS musicPlayer.Artist (" +
                     "artist_id SERIAL PRIMARY KEY, " +
                     "artist_name VARCHAR(70) NOT NULL" +
                     ")"
             );
-            // TABLE: Album
+            // create album table
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS musicPlayer.Album (" +
                     "album_id SERIAL PRIMARY KEY, " +
                     "album_name VARCHAR(70) NOT NULL, " +
@@ -45,7 +47,7 @@ public class MusicRepo implements ImusicRepo {
                     ")"
             );
 
-            // TABLE: Songs
+            // create song table
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS musicPlayer.Songs (" +
                             "song_id SERIAL PRIMARY KEY, " +
                             "title VARCHAR(70) NOT NULL, " +
@@ -55,7 +57,7 @@ public class MusicRepo implements ImusicRepo {
                             "FOREIGN KEY (album_id) REFERENCES musicPlayer.Album(album_id)" +
                             ")"
             );
-            // TABLE: Playlists
+            // create playlist table
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS musicPlayer.Playlists (" +
                             "playlist_id SERIAL PRIMARY KEY, " +
                             "title VARCHAR(70) NOT NULL, " +
@@ -63,7 +65,7 @@ public class MusicRepo implements ImusicRepo {
                             ")"
             );
 
-            // TABLE: PlaylistSongs (many-to-many)
+            // create PlaylistSongs table (many-to-many)
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS musicPlayer.PlaylistSongs (" +
                             "playlist_id INT, " +
                             "song_id INT, " +
@@ -81,11 +83,12 @@ public class MusicRepo implements ImusicRepo {
 
     //constructor to create new song in Music(songs) table
     public void newSong(Music Music){
-        String sql = "INSERT INTO Songs (title, artist_id, album) VALUES (?, ?, ?);";
+        String sql = "INSERT INTO musicPlayer.Songs (title, artist_id, album_id) VALUES (?, ?, ?);";
         try (PreparedStatement stmt = connection.prepareStatement(sql)){
             stmt.setString(1, Music.getTitle());
             stmt.setInt(2, Music.getArtist_id());
-            stmt.setString(3, Music.getAlbum());
+            stmt.setInt(3, Music.getAlbum_id());
+            stmt.executeUpdate();
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -93,7 +96,7 @@ public class MusicRepo implements ImusicRepo {
 
     //method to view all songs in Music(songs) table
     public List<Music> getAllSongs() {
-    String sql = "SELECT song_id, title, artist_id, album " +
+    String sql = "SELECT song_id, title, artist_id, album_id " +
                  "FROM musicPlayer.Songs " +
                  "ORDER BY title;";
     List<Music> songs = new ArrayList<>();
@@ -104,7 +107,7 @@ public class MusicRepo implements ImusicRepo {
             song.setId(result.getInt("song_id"));
             song.setTitle(result.getString("title"));
             song.setArtist_id(result.getInt("artist_id"));
-            song.setAlbum(result.getString("album"));  // or album_id, depending on schema
+            song.setAlbum_id(result.getInt("album_id"));  // or album_id, depending on schema
             songs.add(song);
         }
     } catch (SQLException e) {

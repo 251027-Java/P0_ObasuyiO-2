@@ -11,9 +11,20 @@ public class PlaylistRepo implements ImusicRepo {
     private Connection connection;
 
     //constructor for connection
-    /*public PlaylistRepo(Connection connection) {
+    public PlaylistRepo(Connection connection) {
         this.connection = connection;
-    }*/
+    }
+    public PlaylistRepo() {
+        try {
+            // Make sure these match your DB
+            String url = "jdbc:postgresql://localhost:5432/musicplayerdb";
+            String user = "postgres";
+            String pass = "mysecretpassword";
+            this.connection = DriverManager.getConnection(url, user, pass);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     //methods
     //method to create new playlist into Playlists table using CRUD
